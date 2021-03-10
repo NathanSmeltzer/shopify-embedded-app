@@ -1,6 +1,20 @@
-const Index = ()=> (
-    <div>
-    <p>Sample app using React and Next.js</p>
-  </div>
+import {Layout, Page, EmptyState} from "@shopify/polaris";
+
+const Index = () => (
+    <Page>
+        <Layout>
+            <EmptyState
+                heading="Discount your products temporarily"
+                action={{
+                    content: "select products",
+                    onAction: () => console.log('clicked'),
+                }}
+                image={img}
+            >
+                <p>Select products to change their price temporarily.</p>
+            </EmptyState>
+        </Layout>
+
+    </Page>
 )
 export default Index;
