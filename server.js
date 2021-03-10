@@ -10,15 +10,13 @@ const Router = require('koa-router');
 dotenv.config();
 
 Shopify.Context.initialize({
-    API_KEY: process.env.SHOPIFY_API_KEY,
-    API_SECRET_KEY: process.env.SHOPIFY_API_KEY,
-    SCOPES: process.env.SHOPIFY_API_KEY,
-    SCOPES: process.env.SHOPIFY_API_SCOPES.split(","),
-    // HOST_NAME: process.env.SHOPIFY_APP_URL.replace(/https:\/\//, ""),
-    HOST_NAME: "marketmath1.loca.l",
-    API_VERSION: ApiVersion.October20,
-    IS_EMBEDDED_APP: true,
-    SESSION_STORAGE: new Shopify.Session.MemorySessionStorage(),
+  API_KEY: process.env.SHOPIFY_API_KEY,
+  API_SECRET_KEY: process.env.SHOPIFY_API_SECRET,
+  SCOPES: process.env.SHOPIFY_API_SCOPES.split(","),
+  HOST_NAME: process.env.SHOPIFY_APP_URL.replace(/https:\/\//, ""),
+  API_VERSION: ApiVersion.October20,
+  IS_EMBEDDED_APP: true,
+  SESSION_STORAGE: new Shopify.Session.MemorySessionStorage(),
 });
 
 const port = parseInt(process.env.PORT, 10) || 3000;
@@ -29,43 +27,48 @@ const handle = app.getRequestHandler();
 const ACTIVE_SHOPIFY_SHOPS = {};
 
 app.prepare().then(() => {
-    const server = new Koa();
-    const router = new Router();
-    server.keys = [Shopify.Context.API_SECRET_KEY];
+  const server = new Koa();
+  const router = new Router();
+  server.keys = [Shopify.Context.API_SECRET_KEY];
 
-    server.use(
-        createShopifyAuth({
-            afterAuth(ctx) {
-                const { shop, scope } = ctx.state.shopify;
-                ACTIVE_SHOPIFY_SHOPS[shop] = scope;
-                ctx.redirect(`/?shop=${shop}`);
-            },
-        }),
-    );
+  server.use(
+    createShopifyAuth({
+      afterAuth(ctx) {
+        // console.log(`ctx.state.shopify: ${ctx.state.shopify}`);
+        const { shop, scope } = ctx.state.shopify;
+        ACTIVE_SHOPIFY_SHOPS[shop] = scope;
 
-    const handleRequest = async (ctx) => {
-        await handle(ctx.req, ctx.res);
-        ctx.respond = false;
-        ctx.res.statusCode = 200;
-    };
+        ctx.redirect(`/?shop=${shop}`);
+      },
+    }),
+  );
 
-    router.get("/", async (ctx) => {
-        const shop = ctx.query.shop;
-        if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
-            ctx.redirect(`/auth?shop=${shop}`);
-        } else {
-            await handleRequest(ctx);
-        }
-    });
+  const handleRequest = async (ctx) => {
+    await handle(ctx.req, ctx.res);
+    ctx.respond = false;
+    ctx.res.statusCode = 200;
+  };
 
-    router.get("(/_next/static/.*", handleRequest);
-    router.get("/_next/webpack-hmr", handleRequest);
-    router.get("(.*)", verifyRequest(), handleRequest);
+  router.get("/", async (ctx) => {
+    const shop = ctx.query.shop;
+    // const shop = "marketmath.myshopify.com";
+    // console.log(`shop is ${shop}`);
+    // console.log(`ctx in router.get / is ${JSON.stringify(ctx)}`)
+    if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
+      ctx.redirect(`/auth?shop=${shop}`);
+    } else {
+      await handleRequest(ctx);
+    }
+  });
 
-    server.use(router.allowedMethods());
-    server.use(router.routes());
+  router.get("(/_next/static/.*)", handleRequest);
+  router.get("/_next/webpack-hmr", handleRequest);
+  router.get("(.*)", verifyRequest(), handleRequest);
 
-    server.listen(port, () => {
-        console.log(`> Ready on http://localhost:${port}`);
-    });
+  server.use(router.allowedMethods());
+  server.use(router.routes());
+
+  server.listen(port, () => {
+    console.log(`> Ready on http://localhost:${port}`);
+  });
 });
