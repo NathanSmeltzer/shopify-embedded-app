@@ -52,7 +52,7 @@ app.prepare().then(() => {
   router.get("/", async (ctx) => {
     const shop = ctx.query.shop;
     // const shop = "marketmath.myshopify.com";
-    // console.log(`shop is ${shop}`);
+    console.log(`shop is ${shop}`);
     // console.log(`ctx in router.get / is ${JSON.stringify(ctx)}`)
     if (ACTIVE_SHOPIFY_SHOPS[shop] === undefined) {
       ctx.redirect(`/auth?shop=${shop}`);

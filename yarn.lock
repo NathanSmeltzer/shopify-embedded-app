@@ -110,6 +110,18 @@
   resolved "https://registry.yarnpkg.com/@opentelemetry/context-base/-/context-base-0.14.0.tgz#c67fc20a4d891447ca1a855d7d70fa79a3533001"
   integrity sha512-sDOAZcYwynHFTbLo6n8kIbLiVF3a3BLkrmehJUyEbT9F+Smbi47kLGS2gG2g0fjBLR/Lr1InPD7kXL7FaTqEkw==
 
+"@shopify/app-bridge-react@^1.29.0":
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/@shopify/app-bridge-react/-/app-bridge-react-1.29.0.tgz#b6bc4300a9f07278f23809c9c263814945f58b26"
+  integrity sha512-AheyyIT/Rcdrl+K4GCPZ6vlpRBHb/boqAm6pPF9fiMTJrMhcSnR3d2RmpDU1DI8S3e+EIavR0Hwv30WTxxYa6g==
+  dependencies:
+    "@shopify/app-bridge" "^1.29.0"
+
+"@shopify/app-bridge@^1.29.0":
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/@shopify/app-bridge/-/app-bridge-1.29.0.tgz#217a7cc4cf8ccb51d76e87e6800bca9b9af61673"
+  integrity sha512-gaGHjs9Ov0FLbjGnysrXDYU8r+WI+SKlORkmtJRbAR+Wq3/nlegvopY24/1P5R6bCPgoH+LBH0U9E31ZVCxbpw==
+
 "@shopify/koa-shopify-auth@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@shopify/koa-shopify-auth/-/koa-shopify-auth-4.0.2.tgz#048030edf9e2715ed2eb5cecf54af9fa727eccba"
