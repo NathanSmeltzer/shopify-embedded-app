@@ -1,6 +1,8 @@
 import React from 'react';
 import {Layout, Page, EmptyState} from "@shopify/polaris";
 import {TitleBar, ResourcePicker} from "@shopify/app-bridge-react";
+import store from 'store-js';
+import ResourceListWithProducts from "../components/ResourceList";
 
 const img = 'https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg';
 
@@ -33,13 +35,15 @@ class Index extends React.Component {
                         <p>Select products to change their price temporarily.</p>
                     </EmptyState>
                 </Layout>
+                <ResourceListWithProducts />
             </Page>
         );
     }
     handleSelection = (resources) => {
         const idsFromResources = resources.selection.map((product) => product.id);
         this.setState({open: false });
-        console.log(idsFromResources);
+        // console.log(idsFromResources);
+        store.set('ids', idsFromResources);
     };
 }
 
