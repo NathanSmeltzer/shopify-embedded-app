@@ -10,6 +10,7 @@ class Index extends React.Component {
     state = {open: false};
 
     render() {
+        const emptyState = !store.get('ids');
         console.log('inside Index render');
         return (
             <Page>
@@ -17,31 +18,36 @@ class Index extends React.Component {
                     title="Sample App"
                     primaryAction={{
                         content: 'Select products',
-                        onAction: ()=> this.setState({open: true}),
+                        onAction: () => this.setState({open: true}),
                     }}
                 />
                 <ResourcePicker resourceType="Product" showVariants={false} open={this.state.open}
                                 onSelection={(resources) => this.handleSelection(resources)}
                                 onCancel={() => this.setState({open: false})}/>
-                <Layout>
-                    <EmptyState
-                        heading="Discount your products temporarily"
-                        action={{
-                            content: "select products",
-                            onAction: () => this.setState({open: true}),
-                        }}
-                        image={img}
-                    >
-                        <p>Select products to change their price temporarily.</p>
-                    </EmptyState>
-                </Layout>
-                <ResourceListWithProducts />
+                {emptyState ? (
+                    <Layout>
+                        <EmptyState
+                            heading="Discount your products temporarily"
+                            action={{
+                                content: "select products",
+                                onAction: () => this.setState({open: true}),
+                            }}
+                            image={img}
+                        >
+                            <p>Select products to change their price temporarily.</p>
+                        </EmptyState>
+                    </Layout>
+                ) : (
+                    <ResourceListWithProducts/>
+                )}
+
             </Page>
         );
     }
+
     handleSelection = (resources) => {
         const idsFromResources = resources.selection.map((product) => product.id);
-        this.setState({open: false });
+        this.setState({open: false});
         // console.log(idsFromResources);
         store.set('ids', idsFromResources);
     };
