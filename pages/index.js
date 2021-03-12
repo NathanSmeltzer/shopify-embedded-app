@@ -8,6 +8,7 @@ class Index extends React.Component {
     state = {open: false};
 
     render() {
+        console.log('inside Index render');
         return (
             <Page>
                 <TitleBar
