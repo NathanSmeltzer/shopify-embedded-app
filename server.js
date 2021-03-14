@@ -35,8 +35,11 @@ app.prepare().then(() => {
   server.use(
     createShopifyAuth({
       async afterAuth(ctx) {
-        // console.log(`ctx.state.shopify: ${ctx.state.shopify}`);
+        console.log(`ctx.state.shopify: ${ctx.state.shopify}`);
         const { shop, scope, accessToken } = ctx.state.shopify;
+        console.log(`shop: ${shop}`);
+        console.log(`scope: ${scope}`);
+        console.log(`accessToken: ${accessToken}`);
         ACTIVE_SHOPIFY_SHOPS[shop] = scope;
 
         const returnUrl = `https://${Shopify.Context.HOST_NAME}?shop=${shop}`;
