@@ -35,12 +35,30 @@ app.prepare().then(() => {
   server.use(
     createShopifyAuth({
       async afterAuth(ctx) {
-        console.log(`ctx.state.shopify: ${ctx.state.shopify}`);
+        // console.log(`ctx.state.shopify: ${ctx.state.shopify}`);
         const { shop, scope, accessToken } = ctx.state.shopify;
-        console.log(`shop: ${shop}`);
-        console.log(`scope: ${scope}`);
-        console.log(`accessToken: ${accessToken}`);
+        // console.log(`shop: ${shop}`);
+        // console.log(`scope: ${scope}`);
+        // console.log(`accessToken: ${accessToken}`);
         ACTIVE_SHOPIFY_SHOPS[shop] = scope;
+
+        const registration = await Shopify.Webhooks.Registry.register({
+          shop,
+          accessToken,
+          path: '/webhooks',
+          topic: 'APP_UNINSTALLED',
+          apiVersion: ApiVersion.October20,
+          webhookHandler: (_topic, shop, _body) => {
+            console.log('App uninstalled');
+            delete ACTIVE_SHOPIFY_SHOPS[shop];
+          },
+        });
+
+        if (registration.success) {
+          console.log('Successfully registered webhook!');
+        } else {
+          console.log('Failed to register webhook', registration.result);
+        }
 
         const returnUrl = `https://${Shopify.Context.HOST_NAME}?shop=${shop}`;
         const subscriptionUrl = await getSubscriptionUrl(accessToken, shop, returnUrl);
@@ -52,6 +70,11 @@ app.prepare().then(() => {
   router.post("/graphql", verifyRequest(), async (ctx, next) => {
     await Shopify.Utils.graphqlProxy(ctx.req, ctx.res);
   })
+
+  router.post('/webhooks', async (ctx) => {
+    await Shopify.Webhooks.Registry.process(ctx.req, ctx.res);
+    console.log(`Webhook processed with status code 200`);
+  });
 
   const handleRequest = async (ctx) => {
     await handle(ctx.req, ctx.res);
